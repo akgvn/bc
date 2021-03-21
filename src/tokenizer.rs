@@ -1,12 +1,12 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Token<'source> {
-    // The `usize`s are for line numbers.
+    // The `usize`s used to be for line numbers, but I will not think about error handling just yet..
     LeftParen,
     RightParen,
-    Plus(usize),
-    Minus(usize),
-    Star(usize),
-    Slash(usize),
+    Plus,
+    Minus,
+    Star,
+    Slash,
     Number(&'source str, usize),
     Identifier(&'source str, usize),
     EOF,
@@ -90,24 +90,12 @@ impl<'source> Tokenizer<'source> {
                 '0'..='9' => {
                     token = self.parse_number();
                 }
-                '+' => {
-                    token = Token::Plus(self.line_num);
-                }
-                '-' => {
-                    token = Token::Minus(self.line_num);
-                }
-                '*' => {
-                    token = Token::Star(self.line_num);
-                }
-                '/' => {
-                    token = Token::Slash(self.line_num);
-                }
-                '(' => {
-                    token = Token::LeftParen;
-                }
-                ')' => {
-                    token = Token::RightParen;
-                }
+                '+' => token = Token::Plus,
+                '-' => token = Token::Minus,
+                '*' => token = Token::Star,
+                '/' => token = Token::Slash,
+                '(' => token = Token::LeftParen,
+                ')' => token = Token::RightParen,
                 _ => {
                     panic!("Weird char.");
                 }
