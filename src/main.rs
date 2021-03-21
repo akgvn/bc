@@ -8,18 +8,16 @@ fn main() {
         print!("> ");
         let _ = stdout().flush();
 
-        stdin()
-            .read_line(&mut user_input)
-            .expect("The input is weeeirrrrdddd.");
+        stdin().read_line(&mut user_input).expect(
+            "The input is weeeirrrrdddd. Probably not UTF-8. Use only English characters for now.",
+        );
         println!("You typed: {}", user_input);
 
         if user_input.contains("exit") {
             break;
         }
 
-        let mut tk = Tokenizer::new(&user_input);
-        tk.tokenize();
-        let tokens = tk.get_tokens();
+        let tokens = tokens_from_text(&user_input);
         println!("{:?}", tokens);
         user_input.clear();
     }

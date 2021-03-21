@@ -1,5 +1,8 @@
 #[derive(Debug)]
 pub enum Token<'source> {
+    // The `usize`s are for line numbers.
+    LeftParen,
+    RightParen,
     Plus(usize),
     Minus(usize),
     Star(usize),
@@ -7,6 +10,12 @@ pub enum Token<'source> {
     Number(&'source str, usize),
     Identifier(&'source str, usize),
     EOF,
+}
+
+pub fn tokens_from_text(source: &str) -> Vec<Token> {
+    let mut tk = Tokenizer::new(source);
+    tk.tokenize();
+    tk.tokens
 }
 
 pub struct Tokenizer<'source> {
@@ -18,7 +27,7 @@ pub struct Tokenizer<'source> {
 }
 
 impl<'source> Tokenizer<'source> {
-    pub fn new(source_text: &'source str) -> Self {
+    fn new(source_text: &'source str) -> Self {
         Self {
             source_text,
             chars: source_text.chars().collect(),
@@ -29,7 +38,7 @@ impl<'source> Tokenizer<'source> {
     }
 
     fn parse_number(&mut self) -> Token<'source> {
-        let start = self.current_idx;
+        let start = self.current_idx - 1;
 
         while let Some(ch) = self.chars.get(self.current_idx) {
             if is_digit(*ch) || *ch == '.' {
@@ -43,7 +52,7 @@ impl<'source> Tokenizer<'source> {
     }
 
     fn parse_identifier(&mut self) -> Token<'source> {
-        let start = self.current_idx;
+        let start = self.current_idx - 1;
 
         while let Some(ch) = self.chars.get(self.current_idx) {
             if is_alphanumeric(*ch) {
@@ -56,7 +65,7 @@ impl<'source> Tokenizer<'source> {
         Token::Identifier(&self.source_text[start..self.current_idx], self.line_num)
     }
 
-    pub fn tokenize(&mut self) {
+    fn tokenize(&mut self) {
         loop {
             let ch = self.chars.get(self.current_idx);
             if ch.is_none() {
@@ -66,13 +75,12 @@ impl<'source> Tokenizer<'source> {
 
             let token: Token;
 
+            self.current_idx += 1;
             match ch {
                 ' ' | '\t' | '\r' => {
-                    self.current_idx += 1;
                     continue;
                 }
                 '\n' => {
-                    self.current_idx += 1;
                     self.line_num += 1;
                     continue;
                 }
@@ -84,19 +92,21 @@ impl<'source> Tokenizer<'source> {
                 }
                 '+' => {
                     token = Token::Plus(self.line_num);
-                    self.current_idx += 1;
                 }
                 '-' => {
                     token = Token::Minus(self.line_num);
-                    self.current_idx += 1;
                 }
                 '*' => {
                     token = Token::Star(self.line_num);
-                    self.current_idx += 1;
                 }
                 '/' => {
                     token = Token::Slash(self.line_num);
-                    self.current_idx += 1;
+                }
+                '(' => {
+                    token = Token::LeftParen;
+                }
+                ')' => {
+                    token = Token::RightParen;
                 }
                 _ => {
                     panic!("Weird char.");
@@ -105,10 +115,6 @@ impl<'source> Tokenizer<'source> {
             self.tokens.push(token);
         }
         self.tokens.push(Token::EOF);
-    }
-
-    pub fn get_tokens(self) -> Vec<Token<'source>> {
-        self.tokens
     }
 }
 
