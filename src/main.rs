@@ -2,15 +2,17 @@ mod interpreter;
 mod parser;
 mod tokenizer;
 
-use interpreter::*;
-use parser::*;
+use crate::interpreter::*;
+use crate::parser::*;
+use crate::tokenizer::*;
+use std::collections::HashMap;
 use std::io::{stdin, stdout, Write};
-use tokenizer::*;
 
 fn main() {
     let mut user_input = String::new();
+    let mut map: HashMap<String, f64> = HashMap::new();
 
-    println!("-- rust bc clone 0.0.1 --");
+    println!("< bc-r: a bc clone - 0.0.1 >");
 
     loop {
         print!("> ");
@@ -19,6 +21,7 @@ fn main() {
         stdin()
             .read_line(&mut user_input)
             .expect("The input is weeeirrrrdddd. Use only ASCII characters for now.");
+
         // println!("You typed: {}", user_input);
 
         // TODO This should be a intrinsic function at some point.
@@ -33,7 +36,7 @@ fn main() {
 
         // println!("Ops: {:?}", ops);
 
-        let mut vm = Vm::new(ops);
+        let mut vm = Vm::new(ops, &mut map);
         vm.interpret();
 
         user_input.clear();

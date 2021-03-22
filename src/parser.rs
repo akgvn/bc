@@ -1,18 +1,20 @@
 use crate::tokenizer::Token;
 
 #[derive(Debug)]
-pub enum Op {
+pub enum Op<'source> {
     Add,
     Sub,
     Negate,
     Mult,
     Div,
+    GetVal(&'source str),
+    Assign(&'source str),
     Constant(f64),
 }
 
 struct Parser<'source> {
     tokens: Vec<Token<'source>>,
-    operations: Vec<Op>,
+    operations: Vec<Op<'source>>,
     current_idx: usize,
 }
 
@@ -26,39 +28,37 @@ impl<'source> Parser<'source> {
     }
 
     pub fn parse(&mut self) {
-        /*loop {
-            let token = self.tokens.get(self.current_idx);
-            if token.is_none() {
-                panic!("Shouldn't see none, should see EOF and get out.");
-            }
-            let token = token.unwrap();
-
-            match token {
-                Token::LeftParen => {}
-                Token::RightParen => {}
-                Token::Plus => {}
-                Token::Minus => {}
-                Token::Star => {}
-                Token::Slash => {}
-                Token::Number(src_str, line_num) => {}
-                Token::Identifier(src_str, line_num) => {}
-                Token::EOF => {}
-            }
-        }*/
-        self.parse_expression();
+        self.parse_statement();
     }
 
-    fn parse_expression(&mut self) -> bool {
+    fn parse_statement(&mut self) {
+        loop {
+            match self.get_current_token() {
+                Token::Equals => {
+                    if let Some(val_str) = self.get_prev_ident() {
+                        self.advance();
+                        self.parse_expression();
+                        self.operations.push(Op::Assign(val_str));
+                    } else {
+                    }
+                }
+                Token::StatementEnd | Token::EOF => return,
+                _ => {}
+            }
+            self.parse_expression();
+        }
+    }
+
+    fn parse_expression(&mut self) {
         match self.get_current_token() {
-            Token::EOF => return false,
+            Token::EOF => return,
             _ => {}
         }
         self.parse_term();
-        true
     }
 
-    fn parse_term(&mut self) -> bool {
-        let _ = self.parse_factor();
+    fn parse_term(&mut self) {
+        self.parse_factor();
 
         loop {
             match self.get_current_token() {
@@ -72,17 +72,16 @@ impl<'source> Parser<'source> {
                     self.parse_factor();
                     self.operations.push(Op::Sub);
                 }
-                Token::EOF => return false,
+                Token::EOF => return,
                 _ => {
                     break;
                 }
             }
         }
-        false
     }
 
-    fn parse_factor(&mut self) -> bool {
-        let _ = self.parse_unary();
+    fn parse_factor(&mut self) {
+        self.parse_unary();
 
         loop {
             match self.get_current_token() {
@@ -96,16 +95,15 @@ impl<'source> Parser<'source> {
                     self.parse_unary();
                     self.operations.push(Op::Div);
                 }
-                Token::EOF => return false,
+                Token::EOF => return,
                 _ => {
                     break;
                 }
             }
         }
-        false
     }
 
-    fn parse_unary(&mut self) -> bool {
+    fn parse_unary(&mut self) {
         match self.get_current_token() {
             Token::Minus => {
                 self.advance();
@@ -119,11 +117,10 @@ impl<'source> Parser<'source> {
         }
 
         self.parse_grouping();
-        false
     }
 
-    fn parse_grouping(&mut self) -> bool {
-        let _ = self.parse_literal();
+    fn parse_grouping(&mut self) {
+        self.parse_literal();
 
         let token = self.get_current_token();
         match token {
@@ -134,10 +131,9 @@ impl<'source> Parser<'source> {
             }
             _ => (),
         }
-        false
     }
 
-    fn parse_literal(&mut self) -> bool {
+    fn parse_literal(&mut self) {
         let token = self.get_current_token();
 
         match token {
@@ -146,13 +142,16 @@ impl<'source> Parser<'source> {
                 self.operations.push(Op::Constant(number));
                 self.advance();
             }
-            Token::EOF => return false,
+            Token::Identifier(val_str, _) => {
+                self.operations.push(Op::GetVal(val_str));
+                self.advance();
+            }
+            Token::EOF => return,
             _ => (),
         }
-        false
     }
 
-    fn get_current_token(&self) -> Token {
+    fn get_current_token(&self) -> Token<'source> {
         let token = self.tokens.get(self.current_idx);
         if token.is_none() {
             panic!("Shouldn't happen. EOF and out.");
@@ -169,6 +168,21 @@ impl<'source> Parser<'source> {
             panic!("Didn't see expected!");
         } else {
             self.advance();
+        }
+    }
+
+    fn get_prev_ident(&mut self) -> Option<&'source str> {
+        let last = self.operations.pop();
+        if last.is_none() {
+            return None;
+        }
+        let last = last.unwrap();
+        match last {
+            Op::GetVal(val_str) => Some(val_str),
+            _ => {
+                self.operations.push(last);
+                None
+            }
         }
     }
 }

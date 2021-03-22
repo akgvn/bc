@@ -7,6 +7,8 @@ pub enum Token<'source> {
     Minus,
     Star,
     Slash,
+    StatementEnd,
+    Equals,
     Number(&'source str, usize),
     Identifier(&'source str, usize),
     EOF,
@@ -82,7 +84,13 @@ impl<'source> Tokenizer<'source> {
                 }
                 '\n' => {
                     self.line_num += 1;
-                    continue;
+                    token = Token::StatementEnd;
+
+                    if let Some(tok) = self.tokens.last() {
+                        if *tok == Token::StatementEnd {
+                            continue;
+                        }
+                    }
                 }
                 'a'..='z' | 'A'..='Z' | '_' => {
                     token = self.parse_identifier();
@@ -96,6 +104,7 @@ impl<'source> Tokenizer<'source> {
                 '/' => token = Token::Slash,
                 '(' => token = Token::LeftParen,
                 ')' => token = Token::RightParen,
+                '=' => token = Token::Equals,
                 _ => {
                     panic!("Weird char.");
                 }

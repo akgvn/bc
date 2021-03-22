@@ -8,9 +8,11 @@ Also, learning interpreters / compilers.
 - [x] Tokenizer
 - [x] AST generation
 - [x] Actual interpretation (stack machine)
+- [x] Global variables
 - [ ] Proper error handling.
 - [ ] Big-Number Arithmetics (`scale`)
 - [ ] Functions (`define`)
+  - [ ] Local environment for local variables?
 - [ ] Standard Library
 - [ ] UTF-8 support
 - [ ] Support for econometry stuff? Would be nice since I'm taking Econometrics this semester
