@@ -11,6 +11,7 @@ use std::io::{stdin, stdout, Write};
 fn main() {
     let mut user_input = String::new();
     let mut map: HashMap<String, f64> = HashMap::new();
+    map.insert(String::from("debug"), 0.0);
 
     println!("< bc-r: a bc clone - 0.0.1 >");
 
@@ -30,14 +31,21 @@ fn main() {
         }
 
         let tokens = tokens_from_text(&user_input);
-        // println!("Tokens: {:?}", tokens);
 
-        let ops = get_operations(tokens);
+        if map["debug"] > 0.5 {
+            println!("Tokens: {:?}", tokens);
+        }
 
-        // println!("Ops: {:?}", ops);
+        let (ops, syntax_error) = get_operations(tokens);
 
-        let mut vm = Vm::new(ops, &mut map);
-        vm.interpret();
+        if map["debug"] > 0.5 {
+            println!("Ops: {:?}", ops);
+        }
+
+        if !syntax_error {
+            let mut vm = Vm::new(ops, &mut map);
+            vm.interpret();
+        }
 
         user_input.clear();
     }

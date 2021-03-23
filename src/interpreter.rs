@@ -45,7 +45,7 @@ impl<'source> Vm<'source> {
                     let a = stack.pop().unwrap();
                     stack.push(a / b);
                 }
-                Op::Constant(num) => {
+                Op::PushConstant(num) => {
                     stack.push(num);
                 }
                 Op::GetVal(val_ident) => match self.env.get(val_ident) {
@@ -53,7 +53,7 @@ impl<'source> Vm<'source> {
                         stack.push(*val);
                     }
                     None => {
-                        panic!("Non-existent variable.");
+                        error("Non-existent variable.");
                     }
                 },
                 Op::Assign(val_ident) => {
@@ -67,4 +67,8 @@ impl<'source> Vm<'source> {
             println!("{}", val.unwrap());
         }
     }
+}
+
+fn error(error_text: &str) {
+    println!("Error: {}", error_text);
 }

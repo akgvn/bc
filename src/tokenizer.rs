@@ -4,6 +4,7 @@ pub enum Token<'source> {
     LeftParen,
     RightParen,
     Plus,
+    UnaryMinus,
     Minus,
     Star,
     Slash,
@@ -63,8 +64,11 @@ impl<'source> Tokenizer<'source> {
                 break;
             }
         }
+        let text = &self.source_text[start..self.current_idx];
 
-        Token::Identifier(&self.source_text[start..self.current_idx], self.line_num)
+        match text {
+            _ => Token::Identifier(text, self.line_num),
+        }
     }
 
     fn tokenize(&mut self) {
