@@ -1,4 +1,4 @@
-// Great resource of pratt parsers: https://www.oilshell.org/blog/2017/03/31.html
+// Great resource for pratt parsers: https://www.oilshell.org/blog/2017/03/31.html
 
 use crate::tokenizer::Token;
 use std::fmt;
@@ -48,10 +48,7 @@ impl<'source> Parser<'source> {
     // use .peek and .next like normal people. This can break very easily.
     fn parse_expr(&mut self, minimum_precedence: u8) -> AstNode<'source> {
         let tok = self.get_current_token();
-        println!(
-            "START --- id: {:?}, token: {:?} --- minprec: {}",
-            self.current_idx, tok, minimum_precedence
-        );
+
         let mut left = match tok {
             Token::Number(number_str, _) => {
                 self.advance();
@@ -76,16 +73,13 @@ impl<'source> Parser<'source> {
                 AstNode::Op(tok, vec![right])
             }
             _ => {
-                panic!("bad tok: {:?}", tok);
+                panic!("bad tok: {:?}", tok); // TODO proper error handling.
             }
         };
 
         loop {
             let tok = self.get_current_token();
-            println!(
-                "LOOP  --- id: {:?}, token: {:?} --- minprec: {}",
-                self.current_idx, tok, minimum_precedence
-            );
+
             let op = match tok {
                 Token::Plus | Token::Minus | Token::Star | Token::Slash | Token::Equals => tok,
                 Token::EOF | Token::StatementEnd => {
@@ -95,7 +89,7 @@ impl<'source> Parser<'source> {
                     break;
                 }
                 _ => {
-                    panic!("bad op: {:?}", tok);
+                    panic!("bad op: {:?}", tok); // TODO proper error handling.
                 }
             };
             let (left_prec, right_prec) = infix_precedence(op);
@@ -108,7 +102,7 @@ impl<'source> Parser<'source> {
 
             left = AstNode::Op(op, vec![left, right]);
         }
-        println!("out");
+
         left
     }
 
@@ -139,7 +133,7 @@ fn prefix_precedence(tok: Token) -> u8 {
     match tok {
         Token::Plus | Token::Minus => 5,
         _ => {
-            panic!("bad op: {:?}", tok);
+            panic!("bad op: {:?}", tok); // TODO proper error handling.
         }
     }
 }
@@ -150,7 +144,7 @@ fn infix_precedence(tok: Token) -> (u8, u8) {
         Token::Plus | Token::Minus => (1, 2),
         Token::Star | Token::Slash => (3, 4),
         _ => {
-            panic!("bad op: {:?}", tok);
+            panic!("bad op: {:?}", tok); // TODO proper error handling.
         }
     }
 }
