@@ -7,11 +7,11 @@ Also, learning interpreters / compilers.
 # TODO
 - [x] Tokenizer
 - [x] AST generation
+  - [x] Parser / Compiler rewrite
 - [x] Actual interpretation (stack machine)
 - [x] Global variables
 - [ ] Proper error handling.
 - [ ] Big-Number Arithmetics (`scale`)
-- [ ] Parser / Compiler rewrite? -> See the notes at the top of `src/parser.rs`
 - [ ] Functions (`define`)
   - [ ] Local environment for local variables?
 - [ ] Standard Library
