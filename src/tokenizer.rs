@@ -4,7 +4,6 @@ pub enum Token<'source> {
     LeftParen,
     RightParen,
     Plus,
-    UnaryMinus,
     Minus,
     Star,
     Slash,

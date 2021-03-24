@@ -11,6 +11,7 @@ Also, learning interpreters / compilers.
 - [x] Global variables
 - [ ] Proper error handling.
 - [ ] Big-Number Arithmetics (`scale`)
+- [ ] Parser / Compiler rewrite? -> See the notes at the top of `src/parser.rs`
 - [ ] Functions (`define`)
   - [ ] Local environment for local variables?
 - [ ] Standard Library

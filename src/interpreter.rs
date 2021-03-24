@@ -1,4 +1,4 @@
-use crate::parser::Op;
+use crate::compiler::Op;
 use std::collections::HashMap;
 
 pub struct Vm<'source> {
