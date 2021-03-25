@@ -40,8 +40,15 @@ impl<'source> Parser<'source> {
         }
     }
 
-    pub fn parse(mut self) -> AstNode<'source> {
-        self.parse_expr(0)
+    pub fn parse(mut self) -> Vec<AstNode<'source>> {
+        let mut statements = Vec::new();
+        loop {
+            match self.get_current_token() {
+                Token::EOF => return statements,
+                Token::StatementEnd => self.advance(),
+                _ => statements.push(self.parse_expr(0)),
+            }
+        }
     }
 
     // TODO(ag): There are `self.advance()`s all over the place, so maybe
