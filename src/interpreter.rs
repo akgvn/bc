@@ -17,6 +17,16 @@ impl<'source> Vm<'source> {
 
     pub fn interpret(&mut self) {
         let mut stack: Vec<f64> = vec![];
+
+        let pop = |stack: &mut Vec<f64>| -> f64 {
+            match stack.pop() {
+                Some(value) => value,
+                None => {
+                    panic!("Error: No value on the stack! Must be a problem with the parser?");
+                }
+            }
+        };
+
         loop {
             let operation = self.ops.pop();
             if operation.is_none() {
@@ -25,42 +35,43 @@ impl<'source> Vm<'source> {
             let operation = operation.unwrap();
             match operation {
                 Instruction::Add => {
-                    let a = stack.pop().unwrap();
-                    let b = stack.pop().unwrap();
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
                     stack.push(a + b);
                 }
                 Instruction::Sub => {
-                    let a = stack.pop().unwrap();
-                    let b = stack.pop().unwrap();
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
                     stack.push(a - b);
                 }
                 Instruction::Negate => {
-                    let num = stack.pop().unwrap();
+                    let num = pop(&mut stack);
+
                     stack.push(-num);
                 }
                 Instruction::Mult => {
-                    let a = stack.pop().unwrap();
-                    let b = stack.pop().unwrap();
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
                     stack.push(a * b);
                 }
                 Instruction::Div => {
-                    let a = stack.pop().unwrap();
-                    let b = stack.pop().unwrap();
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
                     stack.push(a / b);
                 }
                 Instruction::PushConstant(num) => {
                     stack.push(num);
                 }
                 Instruction::GetVal(val_ident) => match self.env.get(val_ident) {
-                    Some(val) => {
-                        stack.push(*val);
-                    }
-                    None => {
-                        error("Non-existent variable.");
-                    }
+                    Some(val) => stack.push(*val),
+                    None => error("Non-existent variable."),
                 },
                 Instruction::Assign(val_ident) => {
-                    let val = stack.pop().unwrap();
+                    let val = pop(&mut stack);
                     self.env.insert(String::from(val_ident), val);
                 }
             }
