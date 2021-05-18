@@ -108,6 +108,7 @@ impl<'source> Tokenizer<'source> {
                 '(' => token = Token::LeftParen,
                 ')' => token = Token::RightParen,
                 '=' => token = Token::Equals,
+                ';' => token = Token::StatementEnd,
                 _ => {
                     panic!("Weird char.");
                 }

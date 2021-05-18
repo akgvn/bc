@@ -17,7 +17,7 @@ fn main() {
     let mut user_input = String::new();
     let mut map: HashMap<String, f64> = HashMap::new();
     map.insert(String::from("debug"), 0.0);
-    println!("< bc-r: a bc clone - 0.0.1 >");
+    println!("< bc-r: a bc clone - 0.0.2 >");
 
     let args: Vec<String> = env::args().collect();
 
@@ -53,12 +53,12 @@ fn main() {
         let parser = Parser::new(tokens);
         let statements = parser.parse();
 
-        if map["debug"] > 0.5 {
-            // println!("AST: {}", ast);
-        }
-
         let mut ops = vec![];
         for ast in statements {
+            if map["debug"] > 0.5 {
+                println!("AST: {}", ast);
+            }
+
             let compiler = Compiler::new(); // I don't like doing this every loop. TODO
             ops.append(&mut compiler.compile(ast));
         }

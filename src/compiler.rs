@@ -65,9 +65,9 @@ impl<'source> Compiler<'source> {
 
     fn push_op(&mut self, op_token: Token) {
         match op_token {
-            Token::Plus => self.operations.push(Instruction::Add),
+            Token::Plus  => self.operations.push(Instruction::Add),
             Token::Minus => self.operations.push(Instruction::Sub),
-            Token::Star => self.operations.push(Instruction::Mult),
+            Token::Star  => self.operations.push(Instruction::Mult),
             Token::Slash => self.operations.push(Instruction::Div),
             _ => {
                 panic!("Unexpected token!");
