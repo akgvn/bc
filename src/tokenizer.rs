@@ -9,6 +9,8 @@ pub enum Token<'source> {
     Slash,
     StatementEnd,
     Equals,
+    ArgSeperator,
+    FnCall(&'source str),
     Number(&'source str, usize),
     Identifier(&'source str, usize),
     EOF,
@@ -109,6 +111,7 @@ impl<'source> Tokenizer<'source> {
                 ')' => token = Token::RightParen,
                 '=' => token = Token::Equals,
                 ';' => token = Token::StatementEnd,
+                ',' => token = Token::ArgSeperator,
                 _ => {
                     panic!("Weird char.");
                 }

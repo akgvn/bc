@@ -11,6 +11,8 @@ pub enum Instruction<'source> {
     GetVal(&'source str),
     Assign(&'source str),
     PushConstant(f64),
+    // TODO PopAndAssign(&'source str), // For function arguments.
+    CallFn(&'source str)
 }
 
 pub struct Compiler<'source> {
@@ -56,6 +58,10 @@ impl<'source> Compiler<'source> {
                     self.operations.push(Instruction::Negate);
                 } else if op_token == Token::Plus && child_count == 1 {
                     // Ignore plus
+                } else if let Token::FnCall(fn_name) = op_token {
+                    // Handle function call
+                    // Don't forget that the arguments get pushed to stack in reverse.
+                    self.operations.push(Instruction::CallFn(fn_name));
                 } else if !equals {
                     self.push_op(op_token);
                 }
@@ -65,10 +71,10 @@ impl<'source> Compiler<'source> {
 
     fn push_op(&mut self, op_token: Token) {
         match op_token {
-            Token::Plus  => self.operations.push(Instruction::Add),
-            Token::Minus => self.operations.push(Instruction::Sub),
-            Token::Star  => self.operations.push(Instruction::Mult),
-            Token::Slash => self.operations.push(Instruction::Div),
+            Token::Plus   => self.operations.push(Instruction::Add),
+            Token::Minus  => self.operations.push(Instruction::Sub),
+            Token::Star   => self.operations.push(Instruction::Mult),
+            Token::Slash  => self.operations.push(Instruction::Div),
             _ => {
                 panic!("Unexpected token!");
             }
