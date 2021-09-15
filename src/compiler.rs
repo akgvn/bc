@@ -8,6 +8,7 @@ pub enum Instruction<'source> {
     Negate,
     Mult,
     Div,
+    Mod,
     GetVal(&'source str),
     Assign(&'source str),
     PushConstant(f64),
@@ -71,10 +72,11 @@ impl<'source> Compiler<'source> {
 
     fn push_op(&mut self, op_token: Token) {
         match op_token {
-            Token::Plus   => self.operations.push(Instruction::Add),
-            Token::Minus  => self.operations.push(Instruction::Sub),
-            Token::Star   => self.operations.push(Instruction::Mult),
-            Token::Slash  => self.operations.push(Instruction::Div),
+            Token::Plus    => self.operations.push(Instruction::Add),
+            Token::Minus   => self.operations.push(Instruction::Sub),
+            Token::Star    => self.operations.push(Instruction::Mult),
+            Token::Slash   => self.operations.push(Instruction::Div),
+            Token::Percent => self.operations.push(Instruction::Mod),
             _ => {
                 panic!("Unexpected token!");
             }

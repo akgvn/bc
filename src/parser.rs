@@ -98,7 +98,7 @@ impl<'source> Parser<'source> {
             let tok = self.get_current_token();
 
             let op = match tok {
-                Token::Plus | Token::Minus | Token::Star | Token::Slash | Token::Equals => tok,
+                Token::Plus | Token::Minus | Token::Star | Token::Slash | Token::Percent | Token::Equals => tok,
                 Token::EOF | Token::StatementEnd => {
                     break;
                 }
@@ -171,8 +171,9 @@ fn prefix_precedence(tok: Token) -> u8 {
 fn infix_precedence(tok: Token) -> (u8, u8) {
     match tok {
         Token::Equals => (1, 0),
-        Token::Plus | Token::Minus => (1, 2),
-        Token::Star | Token::Slash => (3, 4),
+        Token::Percent => (1, 2),
+        Token::Plus | Token::Minus => (3, 4),
+        Token::Star | Token::Slash => (5, 6),
         _ => {
             panic!("bad op: {:?}", tok); // TODO proper error handling.
         }

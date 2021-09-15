@@ -64,6 +64,12 @@ impl<'source> Vm<'source> {
 
                     stack.push(a / b);
                 }
+                Instruction::Mod => {
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
+                    stack.push(a % b);
+                }
                 Instruction::PushConstant(num) => {
                     stack.push(num);
                 }
@@ -78,13 +84,16 @@ impl<'source> Vm<'source> {
                 Instruction::CallFn(fn_name) => {
                     // TODO Add the ability to define functions
                     // and check against the definitions here.
+                    let val = pop(&mut stack);
+
                     if fn_name == "sin" {
-                        let val = pop(&mut stack);
                         let result = val.sin();
                         stack.push(result);
                     } else if fn_name == "cos" {
-                        let val = pop(&mut stack);
                         let result = val.cos();
+                        stack.push(result);
+                    } else if fn_name == "sqrt" {
+                        let result = val.sqrt();
                         stack.push(result);
                     } else {
                         error("Unknown function name!");
