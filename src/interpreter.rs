@@ -58,6 +58,12 @@ impl<'source> Vm<'source> {
 
                     stack.push(a * b);
                 }
+                Instruction::Pow => {
+                    let a = pop(&mut stack);
+                    let b = pop(&mut stack);
+
+                    stack.push(a.powf(b));
+                }
                 Instruction::Div => {
                     let a = pop(&mut stack);
                     let b = pop(&mut stack);

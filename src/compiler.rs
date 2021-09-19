@@ -9,6 +9,7 @@ pub enum Instruction<'source> {
     Mult,
     Div,
     Mod,
+    Pow,
     GetVal(&'source str),
     Assign(&'source str),
     PushConstant(f64),
@@ -77,6 +78,7 @@ impl<'source> Compiler<'source> {
             Token::Star    => self.operations.push(Instruction::Mult),
             Token::Slash   => self.operations.push(Instruction::Div),
             Token::Percent => self.operations.push(Instruction::Mod),
+            Token::Power   => self.operations.push(Instruction::Pow),
             _ => {
                 panic!("Unexpected token!");
             }

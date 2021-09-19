@@ -7,6 +7,7 @@ pub enum Token<'source> {
     Minus,
     Star,
     Slash,
+    Power,
     Percent,
     StatementEnd,
     Equals,
@@ -106,7 +107,14 @@ impl<'source> Tokenizer<'source> {
                 }
                 '+' => token = Token::Plus,
                 '-' => token = Token::Minus,
-                '*' => token = Token::Star,
+                '*' => {
+                    if let Some('*') = self.chars.get(self.current_idx) {
+                        token = Token::Power;
+                        self.current_idx += 1;
+                    } else {
+                        token = Token::Star;
+                    }
+                },
                 '/' => token = Token::Slash,
                 '%' => token = Token::Percent,
                 '(' => token = Token::LeftParen,
