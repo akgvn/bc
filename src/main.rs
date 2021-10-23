@@ -17,7 +17,7 @@ fn main() {
     let mut user_input = String::new();
     let mut map: HashMap<String, f64> = HashMap::new();
     map.insert(String::from("debug"), 0.0);
-    println!("< bc-r: a bc clone - 0.0.2 >");
+    println!("< bc-r: a bc clone - 0.0.3 >");
 
     let args: Vec<String> = env::args().collect();
 
