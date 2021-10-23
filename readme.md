@@ -14,9 +14,10 @@ Also, learning interpreters / compilers.
 - [ ] Big-Number Arithmetics (`scale`)
 - [ ] Functions (`define`)
   - [ ] Local environment for local variables?
+  - [ ] BUG: Check the arity of the called function. For example `sqrt(5, 4)` works and generates a `PushConstant(4)` instruction!
 - [ ] Standard Library
 - [ ] UTF-8 support
-- [ ] Support for econometry stuff? Would be nice since I'm taking Econometrics this semester
+- [ ] Support for econometry stuff?
   - [ ] Arrays
   - [ ] Statistical Functions
   - [ ] What else?

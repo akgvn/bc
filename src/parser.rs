@@ -66,11 +66,10 @@ impl<'source> Parser<'source> {
                 self.advance();
 
                 if self.get_current_token() == Token::LeftParen {
-                    self.advance();
                     let args = self.parse_args();
+                    self.expect(Token::RightParen);
                     self.advance();
 
-                    // self.expect(Token::RightParen); TODO(ag) -> we skip over right paren somehow
                     AstNode::Op(Token::FnCall(ident_str), args)
                 } else {
                     AstNode::Ident(ident_str)
@@ -126,12 +125,14 @@ impl<'source> Parser<'source> {
         left
     }
 
-    fn parse_args(&mut self) -> Vec<AstNode<'source>> /*???*/ {
+    fn parse_args(&mut self) -> Vec<AstNode<'source>> {
         let mut args = Vec::new();
-        while self.get_current_token() != Token::RightParen && self.get_current_token() != Token::ArgSeperator && self.get_current_token() != Token::StatementEnd {
+        while (self.get_current_token() != Token::RightParen
+            && self.get_current_token() != Token::StatementEnd)
+            || self.get_current_token() == Token::ArgSeperator {
+            self.advance();
             let arg = self.parse_expr(0);
             args.push(arg);
-            self.advance();
         }
         args
     }
