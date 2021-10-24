@@ -97,7 +97,17 @@ impl<'source> Parser<'source> {
             let tok = self.get_current_token();
 
             let op = match tok {
-                Token::Plus | Token::Minus | Token::Star | Token::Power | Token::Slash | Token::Percent | Token::Equals => tok,
+                Token::Plus
+                | Token::Minus
+                | Token::Star
+                | Token::Power
+                | Token::Slash
+                | Token::Percent
+                | Token::Equals
+                | Token::PlusEquals
+                | Token::MinusEquals
+                | Token::StarEquals
+                | Token::SlashEquals => tok,
                 Token::EOF | Token::StatementEnd => {
                     break;
                 }
@@ -129,7 +139,8 @@ impl<'source> Parser<'source> {
         let mut args = Vec::new();
         while (self.get_current_token() != Token::RightParen
             && self.get_current_token() != Token::StatementEnd)
-            || self.get_current_token() == Token::ArgSeperator {
+            || self.get_current_token() == Token::ArgSeperator
+        {
             self.advance();
             let arg = self.parse_expr(0);
             args.push(arg);
@@ -171,7 +182,11 @@ fn prefix_precedence(tok: Token) -> u8 {
 
 fn infix_precedence(tok: Token) -> (u8, u8) {
     match tok {
-        Token::Equals => (1, 0),
+        Token::Equals
+        | Token::PlusEquals
+        | Token::MinusEquals
+        | Token::StarEquals
+        | Token::SlashEquals => (1, 0),
         Token::Percent => (1, 2),
         Token::Plus | Token::Minus => (3, 4),
         Token::Star | Token::Slash => (5, 6),

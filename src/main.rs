@@ -67,7 +67,7 @@ fn main() {
             println!("Ops: {:?}", ops);
         }
 
-        let mut vm = Vm::new(ops, &mut map);
+        let mut vm = Vm::new(ops, &mut map); // I also don't like doing this every loop. TODO
         vm.interpret();
 
         user_input.clear();

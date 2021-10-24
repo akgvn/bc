@@ -11,6 +11,10 @@ pub enum Token<'source> {
     Percent,
     StatementEnd,
     Equals,
+    PlusEquals,
+    MinusEquals,
+    StarEquals,
+    SlashEquals,
     ArgSeperator,
     FnCall(&'source str),
     Number(&'source str, usize),
@@ -105,23 +109,45 @@ impl<'source> Tokenizer<'source> {
                 '0'..='9' => {
                     token = self.parse_number();
                 }
-                '+' => token = Token::Plus,
-                '-' => token = Token::Minus,
+                '+' => {
+                    if let Some('=') = self.chars.get(self.current_idx) {
+                        token = Token::PlusEquals;
+                        self.current_idx += 1;
+                    } else {
+                        token = Token::Plus;
+                    }
+                }
+                '-' => {
+                    if let Some('=') = self.chars.get(self.current_idx) {
+                        token = Token::MinusEquals;
+                        self.current_idx += 1;
+                    } else {
+                        token = Token::Minus;
+                    }
+                }
                 '*' => {
-                    if let Some('*') = self.chars.get(self.current_idx) {
-                        token = Token::Power;
+                    if let Some('=') = self.chars.get(self.current_idx) {
+                        token = Token::StarEquals;
                         self.current_idx += 1;
                     } else {
                         token = Token::Star;
                     }
-                },
-                '/' => token = Token::Slash,
+                }
+                '/' => {
+                    if let Some('=') = self.chars.get(self.current_idx) {
+                        token = Token::SlashEquals;
+                        self.current_idx += 1;
+                    } else {
+                        token = Token::Slash;
+                    }
+                }
                 '%' => token = Token::Percent,
                 '(' => token = Token::LeftParen,
                 ')' => token = Token::RightParen,
                 '=' => token = Token::Equals,
                 ';' => token = Token::StatementEnd,
                 ',' => token = Token::ArgSeperator,
+                '^' => token = Token::Power,
                 _ => {
                     panic!("Weird char.");
                 }
