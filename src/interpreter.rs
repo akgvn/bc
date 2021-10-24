@@ -34,6 +34,7 @@ impl<'source> Vm<'source> {
                 break;
             }
             let operation = operation.unwrap();
+
             match operation {
                 Instruction::Add => {
                     let a = pop(&mut stack);
@@ -81,11 +82,12 @@ impl<'source> Vm<'source> {
                 }
                 Instruction::GetVal(val_ident) => match self.env.get(val_ident) {
                     Some(val) => stack.push(*val),
-                    None => error("Non-existent variable."),
+                    None => stack.push(0.0),
                 }
                 Instruction::Assign(val_ident) => {
                     let val = pop(&mut stack);
                     self.env.insert(String::from(val_ident), val);
+                    stack.push(val);
                 }
                 Instruction::CallFn(fn_name) => {
                     // TODO Add the ability to define functions
